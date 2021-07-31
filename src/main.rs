@@ -11,26 +11,26 @@ fn main() {
     // Create an instance of your event handler.
     // Usually, you should provide it with the Context object to
     // use when setting your game up.
-    let my_game = MyGame::new(&mut ctx);
+    let my_game = MainState::new(&mut ctx);
 
     // Run!
     event::run(ctx, event_loop, my_game);
 }
 
-struct MyGame {
+struct MainState {
     // Your state here...
 }
 
-impl MyGame {
-    pub fn new(_ctx: &mut Context) -> MyGame {
+impl MainState {
+    pub fn new(_ctx: &mut Context) -> MainState {
         // Load/create resources such as images here.
-        MyGame {
+        MainState {
             // ...
         }
     }
 }
 
-impl EventHandler<ggez::GameError> for MyGame {
+impl EventHandler<ggez::GameError> for MainState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
         // Update code here...
         Ok(())
