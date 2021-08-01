@@ -1,6 +1,7 @@
 use ggez::{Context, ContextBuilder, GameResult};
-use ggez::graphics::{self, Color};
+use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::event::{self, EventHandler};
+use glam::*;
 
 const WINDOW_WIDTH: f32 = 1920.0;
 const WINDOW_HEIGHT: f32 = 1080.0;
@@ -47,8 +48,18 @@ impl EventHandler<ggez::GameError> for MainState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        graphics::clear(ctx, Color::WHITE);
+        graphics::clear(ctx, Color::BLACK);
+        let mut mb = graphics::MeshBuilder::new();
+        mb.circle(
+            DrawMode::fill(),
+            Vec2::new(600.0, 380.0),
+            40.0,
+            1.0,
+            Color::RED
+        )?;
+        let mesh = mb.build(ctx)?;
         // Draw code here...
+        graphics::draw(ctx, &mesh, DrawParam::default())?;
         graphics::present(ctx)
     }
 }
