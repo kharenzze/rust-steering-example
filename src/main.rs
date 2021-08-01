@@ -3,6 +3,10 @@ use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::event::{self, EventHandler};
 use glam::*;
 
+mod target;
+
+use target::Target;
+
 const WINDOW_WIDTH: f32 = 1920.0;
 const WINDOW_HEIGHT: f32 = 1080.0;
 
@@ -29,21 +33,22 @@ fn main() {
 }
 
 struct MainState {
-    // Your state here...
+    target: Target,
 }
 
 impl MainState {
     pub fn new(_ctx: &mut Context) -> MainState {
         // Load/create resources such as images here.
         MainState {
-            // ...
+            target: Target::new(Vec2::new(500.0, 500.0))
         }
     }
 }
 
 impl EventHandler<ggez::GameError> for MainState {
-    fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+    fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         // Update code here...
+        self.target.update(ctx)?;
         Ok(())
     }
 
@@ -60,6 +65,7 @@ impl EventHandler<ggez::GameError> for MainState {
         let mesh = mb.build(ctx)?;
         // Draw code here...
         graphics::draw(ctx, &mesh, DrawParam::default())?;
+        self.target.draw(ctx)?;
         graphics::present(ctx)
     }
 }
