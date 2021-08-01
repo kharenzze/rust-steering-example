@@ -2,9 +2,19 @@ use ggez::{Context, ContextBuilder, GameResult};
 use ggez::graphics::{self, Color};
 use ggez::event::{self, EventHandler};
 
+const WINDOW_WIDTH: f32 = 1920.0;
+const WINDOW_HEIGHT: f32 = 1080.0;
+
 fn main() {
+    let window_setup = ggez::conf::WindowSetup::default()
+        .title("Steering");
+    let window_mode = ggez::conf::WindowMode::default()
+        .min_dimensions(WINDOW_WIDTH, WINDOW_HEIGHT)
+        .dimensions(WINDOW_WIDTH, WINDOW_HEIGHT);
     // Make a Context.
-    let (mut ctx, event_loop) = ContextBuilder::new("my_game", "Cool Game Author")
+    let (mut ctx, event_loop) = ContextBuilder::new("Steering", "Kharenzze")
+        .window_setup(window_setup)
+        .window_mode(window_mode)
         .build()
         .expect("aieee, could not create ggez context!");
 
