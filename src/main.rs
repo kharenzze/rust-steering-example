@@ -1,5 +1,5 @@
 use ggez::{Context, ContextBuilder, GameResult};
-use ggez::graphics::{self, Color, DrawMode, DrawParam};
+use ggez::graphics::{self, Color};
 use ggez::event::{self, EventHandler, MouseButton};
 use simple_logger::SimpleLogger;
 use log::{LevelFilter, info};
