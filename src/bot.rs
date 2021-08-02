@@ -8,12 +8,6 @@ pub struct Bot {
   pub pos: Vec2,
 }
 
-impl Bot {
-  pub fn new(pos: Vec2) -> Self {
-    Bot { pos }
-  }
-}
-
 impl EventHandler<ggez::GameError> for Bot {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     Ok(())
