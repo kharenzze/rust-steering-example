@@ -68,6 +68,9 @@ impl EventHandler<ggez::GameError> for MainState {
   fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
     // Update code here...
     self.target.update(ctx)?;
+    for b in self.bots.iter_mut() {
+      b.update(ctx)?;
+    }
     Ok(())
   }
   
@@ -85,6 +88,9 @@ impl EventHandler<ggez::GameError> for MainState {
     // Draw code here...
     graphics::draw(ctx, &mesh, DrawParam::default())?;
     self.target.draw(ctx)?;
+    for b in self.bots.iter_mut() {
+      b.draw(ctx)?;
+    }
     graphics::present(ctx)
   }
 
