@@ -1,6 +1,8 @@
 use ggez::{Context, ContextBuilder, GameResult};
 use ggez::graphics::{self, Color, DrawMode, DrawParam};
-use ggez::event::{self, EventHandler};
+use ggez::event::{self, EventHandler, MouseButton};
+use simple_logger::SimpleLogger;
+use log::{LevelFilter, debug};
 use glam::*;
 
 mod target;
@@ -11,6 +13,13 @@ const WINDOW_WIDTH: f32 = 1920.0;
 const WINDOW_HEIGHT: f32 = 1080.0;
 
 fn main() {
+  SimpleLogger::new()
+    .with_colors(true)
+    .with_level(LevelFilter::Error)
+    .with_module_level("steering_behaviours", LevelFilter::Debug)
+    .init()
+    .unwrap();
+  debug!("Start!");
   let window_setup = ggez::conf::WindowSetup::default()
   .title("Steering");
   let window_mode = ggez::conf::WindowMode::default()
@@ -67,5 +76,9 @@ impl EventHandler<ggez::GameError> for MainState {
     graphics::draw(ctx, &mesh, DrawParam::default())?;
     self.target.draw(ctx)?;
     graphics::present(ctx)
+  }
+
+  fn mouse_button_down_event(&mut self, ctx: &mut Context, button: MouseButton, x: f32, y: f32) {
+    self.target.mouse_button_down_event(ctx, button, x, y);
   }
 }

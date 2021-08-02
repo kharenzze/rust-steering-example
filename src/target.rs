@@ -1,4 +1,5 @@
-use ggez::event::EventHandler;
+use log::debug;
+use ggez::event::{MouseButton, EventHandler};
 use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::{Context, GameResult};
 use glam::*;
@@ -14,7 +15,7 @@ impl Target {
 }
 
 impl EventHandler<ggez::GameError> for Target {
-  fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+  fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     Ok(())
   }
   
@@ -25,4 +26,11 @@ impl EventHandler<ggez::GameError> for Target {
     // Draw code here...
     graphics::draw(ctx, &mesh, DrawParam::default())
   }
+
+  fn mouse_button_down_event(&mut self, _ctx: &mut Context, button: MouseButton, x: f32, y: f32) {
+    if button == MouseButton::Left {
+      self.pos = Vec2::new(x, y)
+    }
+    debug!("Mouse button pressed: {:?}, x: {}, y: {}", button, x, y);
+}
 }
