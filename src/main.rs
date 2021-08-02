@@ -76,17 +76,6 @@ impl EventHandler<ggez::GameError> for MainState {
   
   fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     graphics::clear(ctx, Color::BLACK);
-    let mut mb = graphics::MeshBuilder::new();
-    mb.circle(
-      DrawMode::fill(),
-      Vec2::new(600.0, 380.0),
-      40.0,
-      1.0,
-      Color::RED
-    )?;
-    let mesh = mb.build(ctx)?;
-    // Draw code here...
-    graphics::draw(ctx, &mesh, DrawParam::default())?;
     self.target.draw(ctx)?;
     for b in self.bots.iter_mut() {
       b.draw(ctx)?;
