@@ -4,6 +4,7 @@ use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::{Context, GameResult};
 use glam::*;
 
+#[derive(Debug, Default)]
 pub struct Target {
   pos: Vec2,
 }
@@ -32,5 +33,5 @@ impl EventHandler<ggez::GameError> for Target {
       self.pos = Vec2::new(x, y)
     }
     debug!("Mouse button pressed: {:?}, x: {}, y: {}", button, x, y);
-}
+  }
 }

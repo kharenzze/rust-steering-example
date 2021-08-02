@@ -2,12 +2,14 @@ use ggez::{Context, ContextBuilder, GameResult};
 use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::event::{self, EventHandler, MouseButton};
 use simple_logger::SimpleLogger;
-use log::{LevelFilter, debug};
+use log::{LevelFilter, info};
 use glam::*;
 
 mod target;
+mod bot;
 
 use target::Target;
+use bot::Bot;
 
 const WINDOW_WIDTH: f32 = 1920.0;
 const WINDOW_HEIGHT: f32 = 1080.0;
@@ -19,7 +21,7 @@ fn main() {
     .with_module_level("steering_behaviours", LevelFilter::Debug)
     .init()
     .unwrap();
-  debug!("Start!");
+  info!("Start!");
   let window_setup = ggez::conf::WindowSetup::default()
   .title("Steering");
   let window_mode = ggez::conf::WindowMode::default()
@@ -43,13 +45,21 @@ fn main() {
 
 struct MainState {
   target: Target,
+  bots: [Bot; 4],
 }
 
 impl MainState {
   pub fn new(_ctx: &mut Context) -> MainState {
-    // Load/create resources such as images here.
+    let mut bots: [Bot; 4] = Default::default();
+    let x = WINDOW_WIDTH * 0.7;
+    let gap = (WINDOW_HEIGHT - 200.0) / 4.0;
+    for (i, b) in bots.iter_mut().enumerate() {
+      b.pos.x = x;
+      b.pos.y = 100.0 + gap * (i as f32);
+    }
     MainState {
-      target: Target::new(Vec2::new(500.0, 500.0))
+      target: Target::new(Vec2::new(500.0, 500.0)),
+      bots
     }
   }
 }
