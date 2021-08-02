@@ -52,10 +52,10 @@ impl MainState {
   pub fn new(_ctx: &mut Context) -> MainState {
     let mut bots: [Bot; 4] = Default::default();
     let x = WINDOW_WIDTH * 0.7;
-    let gap = (WINDOW_HEIGHT - 200.0) / 4.0;
+    let gap = (WINDOW_HEIGHT - 200.0) / 5.0;
     for (i, b) in bots.iter_mut().enumerate() {
       b.pos.x = x;
-      b.pos.y = 100.0 + gap * (i as f32);
+      b.pos.y = 100.0 + gap * ((i + 1) as f32);
     }
     MainState {
       target: Target::new(Vec2::new(500.0, 500.0)),
