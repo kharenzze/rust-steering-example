@@ -56,6 +56,7 @@ impl MainState {
     for (i, b) in bots.iter_mut().enumerate() {
       b.pos.x = x;
       b.pos.y = 100.0 + gap * ((i + 1) as f32);
+      b.disabled = i != 0;
     }
     MainState {
       target: Target::new(Vec2::new(500.0, 500.0)),
