@@ -70,7 +70,7 @@ impl EventHandler<ggez::GameError> for MainState {
     // Update code here...
     self.target.update(ctx)?;
     for b in self.bots.iter_mut() {
-      b.update(ctx)?;
+      b.update(ctx, &self.target)?;
     }
     Ok(())
   }

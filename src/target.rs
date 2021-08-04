@@ -6,7 +6,7 @@ use glam::*;
 
 #[derive(Debug, Default)]
 pub struct Target {
-  pos: Vec2,
+  pub pos: Vec2,
 }
 
 impl Target {
