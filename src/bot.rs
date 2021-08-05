@@ -1,11 +1,12 @@
-use ggez::graphics::{self, Color, DrawMode, DrawParam, window};
+use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::{Context, GameResult};
 use glam::*;
-
 use crate::MainState;
+use crate::extended_context::ExtendedContext;
 
 const MAX_SPEED: f32 = 10.0;
 const MAX_IMPULSE: f32 = 3.0;
+const RADIO_RATIO: f32 = 1.0 / 36.0;
 
 #[derive(Debug)]
 pub enum SteeringBehaviour {
@@ -28,6 +29,11 @@ pub struct StateUpdate {
 }
 
 impl Bot {
+  #[inline]
+  pub fn get_radius(&self, ctx: &mut Context) -> f32 {
+    ctx.inner_size().x * RADIO_RATIO
+  }
+
   pub fn update(&mut self, _ctx: &mut Context, state_update: &StateUpdate) -> GameResult<()> {
     if self.disabled {
       return Ok(());
@@ -73,10 +79,8 @@ impl Bot {
     if self.disabled {
       return Ok(());
     }
-    let size = window(ctx).inner_size();
-    let h = size.height as f32;
     let mut mb = graphics::MeshBuilder::new();
-    mb.circle(DrawMode::fill(), self.pos, h / 36.0, 1.0, Color::WHITE)?;
+    mb.circle(DrawMode::fill(), self.pos, self.get_radius(ctx), 1.0, Color::WHITE)?;
     mb.line(&[self.pos, self.pos + self.speed * 10.0], 2.0, Color::RED)?;
     mb.line(
       &[self.pos, self.pos + self.desired_speed * 10.0],
