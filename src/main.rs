@@ -2,7 +2,7 @@ mod bot;
 mod target;
 
 use bot::{Bot, StateUpdate, SteeringBehaviour};
-use ggez::event::{self, EventHandler, MouseButton};
+use ggez::event::{self, EventHandler, MouseButton, KeyCode, KeyMods};
 use ggez::graphics::{self, Color};
 use ggez::timer;
 use ggez::{Context, ContextBuilder, GameResult};
@@ -112,4 +112,21 @@ impl EventHandler<ggez::GameError> for MainState {
   fn mouse_button_down_event(&mut self, ctx: &mut Context, button: MouseButton, x: f32, y: f32) {
     self.target.mouse_button_down_event(ctx, button, x, y);
   }
+
+  fn key_down_event(
+        &mut self,
+        _ctx: &mut Context,
+        keycode: KeyCode,
+        _keymod: KeyMods,
+        _repeat: bool,
+    ) {
+      let opt: Option<SteeringBehaviour> = match keycode {
+        KeyCode::Q => Some(SteeringBehaviour::SimpleSeek),
+        KeyCode::W => Some(SteeringBehaviour::SimpleFlee),
+        _ => None
+      };
+      if let Some(sb) = opt {
+        self.steering_behaviour = sb;
+      }
+    }
 }
