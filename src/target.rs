@@ -1,8 +1,8 @@
-use log::debug;
-use ggez::event::{MouseButton, EventHandler};
+use ggez::event::{EventHandler, MouseButton};
 use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::{Context, GameResult};
 use glam::*;
+use log::debug;
 
 #[derive(Debug, Default)]
 pub struct Target {
@@ -19,7 +19,7 @@ impl EventHandler<ggez::GameError> for Target {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     Ok(())
   }
-  
+
   fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     let mut mb = graphics::MeshBuilder::new();
     mb.circle(DrawMode::fill(), self.pos, 20.0, 1.0, Color::YELLOW)?;

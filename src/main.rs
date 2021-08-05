@@ -1,15 +1,15 @@
-use ggez::{Context, ContextBuilder, GameResult};
-use ggez::graphics::{self, Color};
 use ggez::event::{self, EventHandler, MouseButton};
-use simple_logger::SimpleLogger;
-use log::{LevelFilter, debug, info};
+use ggez::graphics::{self, Color};
+use ggez::{Context, ContextBuilder, GameResult};
 use glam::*;
+use log::{debug, info, LevelFilter};
+use simple_logger::SimpleLogger;
 
-mod target;
 mod bot;
+mod target;
 
-use target::Target;
 use bot::{Bot, StateUpdate};
+use target::Target;
 
 const WINDOW_WIDTH: f32 = 1920.0;
 const WINDOW_HEIGHT: f32 = 1080.0;
@@ -22,23 +22,22 @@ fn main() {
     .init()
     .unwrap();
   info!("Start!");
-  let window_setup = ggez::conf::WindowSetup::default()
-  .title("Steering");
+  let window_setup = ggez::conf::WindowSetup::default().title("Steering");
   let window_mode = ggez::conf::WindowMode::default()
-  .min_dimensions(WINDOW_WIDTH, WINDOW_HEIGHT)
-  .dimensions(WINDOW_WIDTH, WINDOW_HEIGHT);
+    .min_dimensions(WINDOW_WIDTH, WINDOW_HEIGHT)
+    .dimensions(WINDOW_WIDTH, WINDOW_HEIGHT);
   // Make a Context.
   let (mut ctx, event_loop) = ContextBuilder::new("Steering", "Kharenzze")
-  .window_setup(window_setup)
-  .window_mode(window_mode)
-  .build()
-  .expect("aieee, could not create ggez context!");
-  
+    .window_setup(window_setup)
+    .window_mode(window_mode)
+    .build()
+    .expect("aieee, could not create ggez context!");
+
   // Create an instance of your event handler.
   // Usually, you should provide it with the Context object to
   // use when setting your game up.
   let my_game = MainState::new(&mut ctx);
-  
+
   // Run!
   event::run(ctx, event_loop, my_game);
 }
@@ -62,7 +61,7 @@ impl MainState {
     MainState {
       target: Target::new(Vec2::new(500.0, 500.0)),
       bots,
-      x: 1
+      x: 1,
     }
   }
 }
@@ -70,17 +69,18 @@ impl MainState {
 impl EventHandler<ggez::GameError> for MainState {
   fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
     let ref imm = *self;
-    let bot_updates: Vec<StateUpdate> = imm.bots
+    let bot_updates: Vec<StateUpdate> = imm
+      .bots
       .iter()
       .map(|b| b.calculate_steering_impulse(imm))
       .collect();
     self.target.update(ctx)?;
-    for b in self.bots.iter_mut() {
-      b.update(ctx, &self.target)?;
+    for (i, b) in self.bots.iter_mut().enumerate() {
+      b.update(ctx, &bot_updates[i])?;
     }
     Ok(())
   }
-  
+
   fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     graphics::clear(ctx, Color::BLACK);
     self.target.draw(ctx)?;
