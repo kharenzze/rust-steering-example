@@ -1,8 +1,8 @@
-use ggez::graphics::{self, Color, DrawMode, DrawParam, Rect};
+use crate::extended_context::ExtendedContext;
+use crate::MainState;
+use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::{Context, GameResult};
 use glam::*;
-use crate::MainState;
-use crate::extended_context::ExtendedContext;
 
 const MAX_SPEED: f32 = 10.0;
 const MAX_IMPULSE: f32 = 3.0;
@@ -34,7 +34,7 @@ impl Bot {
     ctx.inner_size().x * RADIO_RATIO
   }
 
-  pub fn update(&mut self, _ctx: &mut Context, state_update: &StateUpdate) -> GameResult<()> {
+  pub fn update(&mut self, ctx: &mut Context, state_update: &StateUpdate) -> GameResult<()> {
     if self.disabled {
       return Ok(());
     }
@@ -42,7 +42,18 @@ impl Bot {
     self.speed += state_update.steering_impulse;
     self.speed = self.speed.clamp_length_max(MAX_SPEED);
     self.pos += self.speed;
+    self.enforce_pos_inside_view(ctx);
     Ok(())
+  }
+
+  fn enforce_pos_inside_view(&mut self, ctx: &Context) {
+    let rect = ctx.view_rect();
+    if !rect.contains(self.pos) {
+      self.pos = Vec2::new(
+        self.pos.x.clamp(rect.x, rect.w),
+        self.pos.y.clamp(rect.y, rect.h),
+      )
+    }
   }
 
   pub fn calculate_steering_impulse(&self, state: &MainState) -> StateUpdate {
@@ -81,7 +92,13 @@ impl Bot {
       return Ok(());
     }
     let mut mb = graphics::MeshBuilder::new();
-    mb.circle(DrawMode::fill(), self.pos, self.get_radius(ctx), 1.0, Color::WHITE)?;
+    mb.circle(
+      DrawMode::fill(),
+      self.pos,
+      self.get_radius(ctx),
+      1.0,
+      Color::WHITE,
+    )?;
     mb.line(&[self.pos, self.pos + self.speed * 10.0], 2.0, Color::RED)?;
     mb.line(
       &[self.pos, self.pos + self.desired_speed * 10.0],
