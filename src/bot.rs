@@ -10,6 +10,7 @@ const MAX_IMPULSE: f32 = 3.0;
 #[derive(Debug)]
 pub enum SteeringBehaviour {
   SimpleSeek,
+  SimpleFlee,
 }
 
 #[derive(Debug, Default)]
