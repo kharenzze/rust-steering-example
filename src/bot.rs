@@ -1,9 +1,7 @@
 use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::{Context, GameResult};
 use glam::*;
-use log::debug;
 
-use crate::target::Target;
 use crate::MainState;
 
 const MAX_SPEED: f32 = 10.0;
