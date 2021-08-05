@@ -4,9 +4,10 @@ mod target;
 use bot::{Bot, StateUpdate};
 use ggez::event::{self, EventHandler, MouseButton};
 use ggez::graphics::{self, Color};
+use ggez::timer;
 use ggez::{Context, ContextBuilder, GameResult};
 use glam::*;
-use log::{info, LevelFilter};
+use log::{debug, info, LevelFilter};
 use simple_logger::SimpleLogger;
 use target::Target;
 
@@ -78,15 +79,19 @@ impl MainState {
 
 impl EventHandler<ggez::GameError> for MainState {
   fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-    let ref imm = *self;
-    let bot_updates: Vec<StateUpdate> = imm
-      .bots
-      .iter()
-      .map(|b| b.calculate_steering_impulse(imm))
-      .collect();
-    self.target.update(ctx)?;
-    for (i, b) in self.bots.iter_mut().enumerate() {
-      b.update(ctx, &bot_updates[i])?;
+    const TARGET_FPS: u32 = 60;
+
+    if timer::check_update_time(ctx, TARGET_FPS) {
+      let ref imm = *self;
+      let bot_updates: Vec<StateUpdate> = imm
+        .bots
+        .iter()
+        .map(|b| b.calculate_steering_impulse(imm))
+        .collect();
+      self.target.update(ctx)?;
+      for (i, b) in self.bots.iter_mut().enumerate() {
+        b.update(ctx, &bot_updates[i])?;
+      }
     }
     Ok(())
   }
@@ -97,7 +102,9 @@ impl EventHandler<ggez::GameError> for MainState {
     for b in self.bots.iter_mut() {
       b.draw(ctx)?;
     }
-    graphics::present(ctx)
+    graphics::present(ctx)?;
+    timer::yield_now();
+    Ok(())
   }
 
   fn mouse_button_down_event(&mut self, ctx: &mut Context, button: MouseButton, x: f32, y: f32) {
