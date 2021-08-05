@@ -1,14 +1,13 @@
+mod bot;
+mod target;
+
+use bot::{Bot, StateUpdate};
 use ggez::event::{self, EventHandler, MouseButton};
 use ggez::graphics::{self, Color};
 use ggez::{Context, ContextBuilder, GameResult};
 use glam::*;
 use log::{info, LevelFilter};
 use simple_logger::SimpleLogger;
-
-mod bot;
-mod target;
-
-use bot::{Bot, StateUpdate};
 use target::Target;
 
 const DIM_1080: Vec2 = const_vec2!([1920.0, 1080.0]);
