@@ -41,12 +41,27 @@ impl Bot {
   pub fn calculate_steering_impulse(&self, state: &MainState) -> StateUpdate {
     match state.steering_behaviour {
       SteeringBehaviour::SimpleSeek => self.calculate_simple_seek(state),
-      SteeringBehaviour::SimpleFlee => self.calculate_simple_seek(state),
+      SteeringBehaviour::SimpleFlee => self.calculate_simple_flee(state),
     }
   }
 
   pub fn calculate_simple_seek(&self, state: &MainState) -> StateUpdate {
     let desired_speed = (state.target.pos - self.pos).clamp_length_max(MAX_SPEED);
+    let steering_impulse = (desired_speed - self.speed).clamp_length_max(MAX_IMPULSE);
+    StateUpdate {
+      desired_speed,
+      steering_impulse,
+    }
+  }
+
+  pub fn calculate_simple_flee(&self, state: &MainState) -> StateUpdate {
+    let diff = self.pos - state.target.pos;
+    let safe_diff = if diff.length_squared() < 0.1 {
+      Vec2::new(-1.0, -1.0)
+    } else {
+      diff
+    };
+    let desired_speed = safe_diff.clamp_length(MAX_SPEED, MAX_SPEED);
     let steering_impulse = (desired_speed - self.speed).clamp_length_max(MAX_IMPULSE);
     StateUpdate {
       desired_speed,
