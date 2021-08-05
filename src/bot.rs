@@ -1,4 +1,4 @@
-use ggez::graphics::{self, Color, DrawMode, DrawParam};
+use ggez::graphics::{self, Color, DrawMode, DrawParam, Rect};
 use ggez::{Context, GameResult};
 use glam::*;
 use crate::MainState;
