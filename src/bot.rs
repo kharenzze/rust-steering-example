@@ -31,7 +31,7 @@ pub struct StateUpdate {
 impl Bot {
   #[inline]
   pub fn get_radius(&self, ctx: &mut Context) -> f32 {
-    ctx.inner_size().x * RADIO_RATIO
+    ctx.inner_size().y * RADIO_RATIO
   }
 
   pub fn update(&mut self, ctx: &mut Context, state_update: &StateUpdate) -> GameResult<()> {
