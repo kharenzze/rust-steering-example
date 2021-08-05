@@ -7,6 +7,11 @@ use crate::MainState;
 const MAX_SPEED: f32 = 10.0;
 const MAX_IMPULSE: f32 = 3.0;
 
+#[derive(Debug)]
+pub enum SteeringBehaviour {
+  SimpleSeek,
+}
+
 #[derive(Debug, Default)]
 pub struct Bot {
   pub pos: Vec2,
@@ -33,6 +38,12 @@ impl Bot {
   }
 
   pub fn calculate_steering_impulse(&self, state: &MainState) -> StateUpdate {
+    match state.steering_behaviour {
+      SteeringBehaviour::SimpleSeek => self.calculate_simple_seek(state),
+    }
+  }
+
+  pub fn calculate_simple_seek(&self, state: &MainState) -> StateUpdate {
     let desired_speed = (state.target.pos - self.pos).clamp_length_max(MAX_SPEED);
     let steering_impulse = (desired_speed - self.speed).clamp_length_max(MAX_IMPULSE);
     StateUpdate {

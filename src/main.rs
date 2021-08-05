@@ -1,7 +1,7 @@
 mod bot;
 mod target;
 
-use bot::{Bot, StateUpdate};
+use bot::{Bot, StateUpdate, SteeringBehaviour};
 use ggez::event::{self, EventHandler, MouseButton};
 use ggez::graphics::{self, Color};
 use ggez::timer;
@@ -55,6 +55,7 @@ pub struct MainState {
   pub target: Target,
   pub bots: [Bot; 4],
   pub resolution: Vec2,
+  pub steering_behaviour: SteeringBehaviour,
   pub x: usize,
 }
 
@@ -70,6 +71,7 @@ impl MainState {
     }
     MainState {
       target: Target::new(Vec2::new(500.0, 500.0)),
+      steering_behaviour: SteeringBehaviour::SimpleSeek,
       bots,
       resolution: res,
       x: 1,
