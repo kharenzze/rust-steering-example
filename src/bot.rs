@@ -12,6 +12,7 @@ const RADIO_RATIO: f32 = 1.0 / 36.0;
 pub enum SteeringBehaviour {
   SimpleSeek,
   SimpleFlee,
+  SeekAndArrive(f32),
 }
 
 #[derive(Debug, Default)]
@@ -60,6 +61,7 @@ impl Bot {
     match state.steering_behaviour {
       SteeringBehaviour::SimpleSeek => self.calculate_simple_seek(state),
       SteeringBehaviour::SimpleFlee => self.calculate_simple_flee(state),
+      SteeringBehaviour::SeekAndArrive(radius) => self.calculate_simple_seek(state),
     }
   }
 
