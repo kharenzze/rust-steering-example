@@ -40,6 +40,7 @@ impl Bot {
     }
     self.desired_speed = state_update.desired_speed;
     self.speed += state_update.steering_impulse;
+    self.speed = self.speed.clamp_length_max(MAX_SPEE);
     self.pos += self.speed;
     Ok(())
   }
