@@ -1,4 +1,4 @@
-use ggez::graphics::{self, Color, DrawMode, DrawParam};
+use ggez::graphics::{self, Color, DrawMode, DrawParam, window};
 use ggez::{Context, GameResult};
 use glam::*;
 
@@ -45,8 +45,10 @@ impl Bot {
     if self.disabled {
       return Ok(());
     }
+    let size = window(ctx).inner_size();
+    let h = size.height as f32;
     let mut mb = graphics::MeshBuilder::new();
-    mb.circle(DrawMode::fill(), self.pos, 30.0, 1.0, Color::WHITE)?;
+    mb.circle(DrawMode::fill(), self.pos, h / 36.0, 1.0, Color::WHITE)?;
     mb.line(&[self.pos, self.pos + self.speed * 10.0], 2.0, Color::RED)?;
     mb.line(
       &[self.pos, self.pos + self.desired_speed * 10.0],

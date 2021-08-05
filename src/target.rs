@@ -1,5 +1,5 @@
 use ggez::event::{EventHandler, MouseButton};
-use ggez::graphics::{self, Color, DrawMode, DrawParam};
+use ggez::graphics::{self, Color, DrawMode, DrawParam, window};
 use ggez::{Context, GameResult};
 use glam::*;
 use log::debug;
@@ -21,8 +21,10 @@ impl EventHandler<ggez::GameError> for Target {
   }
 
   fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    let size = window(ctx).inner_size();
+    let h = size.height as f32;
     let mut mb = graphics::MeshBuilder::new();
-    mb.circle(DrawMode::fill(), self.pos, 20.0, 1.0, Color::YELLOW)?;
+    mb.circle(DrawMode::fill(), self.pos, h / 72.0, 1.0, Color::YELLOW)?;
     let mesh = mb.build(ctx)?;
     // Draw code here...
     graphics::draw(ctx, &mesh, DrawParam::default())
