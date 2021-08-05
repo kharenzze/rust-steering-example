@@ -2,14 +2,14 @@ use ggez::{Context, ContextBuilder, GameResult};
 use ggez::graphics::{self, Color};
 use ggez::event::{self, EventHandler, MouseButton};
 use simple_logger::SimpleLogger;
-use log::{LevelFilter, info};
+use log::{LevelFilter, debug, info};
 use glam::*;
 
 mod target;
 mod bot;
 
 use target::Target;
-use bot::Bot;
+use bot::{Bot, StateUpdate};
 
 const WINDOW_WIDTH: f32 = 1920.0;
 const WINDOW_HEIGHT: f32 = 1080.0;
@@ -42,10 +42,11 @@ fn main() {
   // Run!
   event::run(ctx, event_loop, my_game);
 }
-
+#[derive(Debug)]
 struct MainState {
   target: Target,
   bots: [Bot; 4],
+  x: usize,
 }
 
 impl MainState {
@@ -60,14 +61,19 @@ impl MainState {
     }
     MainState {
       target: Target::new(Vec2::new(500.0, 500.0)),
-      bots
+      bots,
+      x: 1
     }
   }
 }
 
 impl EventHandler<ggez::GameError> for MainState {
   fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-    // Update code here...
+    let ref imm = *self;
+    let bot_updates: Vec<StateUpdate> = imm.bots
+      .iter()
+      .map(|b| b.calculate_steering_impulse(imm))
+      .collect();
     self.target.update(ctx)?;
     for b in self.bots.iter_mut() {
       b.update(ctx, &self.target)?;

@@ -3,6 +3,7 @@ use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::{Context, GameResult};
 use glam::*;
 
+use crate::MainState;
 use crate::target::Target;
 
 const MAX_SPEED: f32 = 10.0;
@@ -16,18 +17,32 @@ pub struct Bot {
   pub disabled: bool,
 }
 
+#[derive(Debug, Default)]
+pub struct StateUpdate {
+  desired_speed: Vec2,
+  steering_impulse: Vec2
+}
+
 impl Bot {
-  pub fn update(&mut self, _ctx: &mut Context, target: &Target) -> GameResult<()> {
+  pub fn update(&mut self, _ctx: &mut Context, state_update: StateUpdate) -> GameResult<()> {
     if self.disabled {
       return Ok(())
     }
-    self.desired_speed = (target.pos - self.pos)
-      .clamp_length_max(MAX_SPEED);
-    let steering_impulse = (self.desired_speed - self.speed)
-      .clamp_length_max(MAX_IMPULSE);
-    self.speed += steering_impulse;
+    self.desired_speed = state_update.desired_speed;
+    self.speed += state_update.steering_impulse;
     self.pos += self.speed;
     Ok(())
+  }
+
+  pub fn calculate_steering_impulse(self, state: &MainState) -> StateUpdate {
+    let desired_speed = (state.target.pos - self.pos)
+      .clamp_length_max(MAX_SPEED);
+    let steering_impulse = (desired_speed - self.speed)
+      .clamp_length_max(MAX_IMPULSE);
+    StateUpdate {
+      desired_speed,
+      steering_impulse,
+    }
   }
   
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
