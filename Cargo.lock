@@ -2356,6 +2356,7 @@ dependencies = [
  "ggez",
  "glam",
  "log",
+ "rand 0.8.4",
  "simple_logger",
 ]
 

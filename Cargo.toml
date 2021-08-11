@@ -9,6 +9,7 @@ edition = "2018"
 ggez = "0.6.0"
 glam = "0.15.2"
 log = "0.4.14"
+rand = "0.8.4"
 
 [dependencies.simple_logger]
 version = "1.12.1"
