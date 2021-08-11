@@ -59,7 +59,7 @@ impl Bot {
 
   pub fn calculate_steering_impulse(&self, state: &MainState) -> StateUpdate {
     match state.steering_behaviour {
-      SteeringBehaviour::SimpleSeek => self.calculate_simple_seek(state),
+      SteeringBehaviour::SimpleSeek => self.calculate_seek_and_arrive(state, 0.0),
       SteeringBehaviour::SimpleFlee => self.calculate_simple_flee(state),
       SteeringBehaviour::SeekAndArrive(radius) => self.calculate_seek_and_arrive(state, radius),
     }
@@ -72,15 +72,6 @@ impl Bot {
     if distance < radius {
       desired_speed = desired_speed * (distance / radius);
     }
-    let steering_impulse = (desired_speed - self.speed).clamp_length_max(MAX_IMPULSE);
-    StateUpdate {
-      desired_speed,
-      steering_impulse,
-    }
-  }
-
-  pub fn calculate_simple_seek(&self, state: &MainState) -> StateUpdate {
-    let desired_speed = (state.target.pos - self.pos).clamp_length_max(MAX_SPEED);
     let steering_impulse = (desired_speed - self.speed).clamp_length_max(MAX_IMPULSE);
     StateUpdate {
       desired_speed,
