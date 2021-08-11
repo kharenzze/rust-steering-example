@@ -1,19 +1,38 @@
+use std::time::Duration;
+
 use crate::extensions::ExtendedContext;
 use crate::MainState;
 use ggez::graphics::{self, Color, DrawMode, DrawParam};
-use ggez::{Context, GameResult};
+use ggez::{Context, GameResult, timer};
 use glam::*;
 
 const MAX_SPEED: f32 = 10.0;
 const MAX_IMPULSE: f32 = 3.0;
 const RADIO_RATIO: f32 = 1.0 / 36.0;
 
+#[derive(Debug, Clone, Copy)]
+pub struct WanderProps {
+  radius: f32,
+  center: f32,
+  interval: Duration,
+}
+
+impl Default for WanderProps {
+  fn default() -> Self {
+      Self {
+        radius: 5.0,
+        center: 5.0,
+        interval: Duration::from_millis(500)
+      }
+  }
+}
+
 #[derive(Debug)]
 pub enum SteeringBehaviour {
   SimpleSeek,
   SimpleFlee,
   SeekAndArrive(f32),
-  Wander(f32, f32),
+  Wander(WanderProps),
 }
 
 #[derive(Debug, Default)]
@@ -21,6 +40,7 @@ pub struct Bot {
   pub pos: Vec2,
   speed: Vec2,
   desired_speed: Vec2,
+  last_wander_time: Duration,
   pub disabled: bool,
 }
 
@@ -63,11 +83,12 @@ impl Bot {
       SteeringBehaviour::SimpleSeek => self.calculate_seek_and_arrive(state, 0.0),
       SteeringBehaviour::SimpleFlee => self.calculate_simple_flee(state),
       SteeringBehaviour::SeekAndArrive(radius) => self.calculate_seek_and_arrive(state, radius),
-      SteeringBehaviour::Wander(dist, rad) => self.calculate_wander(state, ctx, dist, rad),
+      SteeringBehaviour::Wander(wander_props) => self.calculate_wander(state, ctx,wander_props),
     }
   }
 
-  pub fn calculate_wander(&self, state: &MainState, ctx: &Context, dist: f32, radius: f32) -> StateUpdate {
+  pub fn calculate_wander(&self, state: &MainState, ctx: &Context, wp: WanderProps) -> StateUpdate {
+    let time = timer::time_since_start(ctx);
     let distance_vector = state.target.pos - self.pos;
     let mut desired_speed = distance_vector.clamp_length_max(MAX_SPEED);
     let steering_impulse = (desired_speed - self.speed).clamp_length_max(MAX_IMPULSE);

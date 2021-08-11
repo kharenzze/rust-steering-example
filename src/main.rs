@@ -2,7 +2,7 @@ mod bot;
 mod target;
 mod extensions;
 
-use bot::{Bot, StateUpdate, SteeringBehaviour};
+use bot::{Bot, StateUpdate, SteeringBehaviour, WanderProps};
 use ggez::event::{self, EventHandler, MouseButton, KeyCode, KeyMods};
 use ggez::graphics::{self, Color};
 use ggez::timer;
@@ -125,7 +125,7 @@ impl EventHandler<ggez::GameError> for MainState {
         KeyCode::Q => Some(SteeringBehaviour::SimpleSeek),
         KeyCode::W => Some(SteeringBehaviour::SimpleFlee),
         KeyCode::E => Some(SteeringBehaviour::SeekAndArrive(60.0)),
-        KeyCode::R => Some(SteeringBehaviour::Wander(5.0, 5.0)),
+        KeyCode::R => Some(SteeringBehaviour::Wander(WanderProps::default())),
         _ => None
       };
       if let Some(sb) = opt {
