@@ -1,6 +1,6 @@
 mod bot;
 mod target;
-mod extended_context;
+mod extensions;
 
 use bot::{Bot, StateUpdate, SteeringBehaviour};
 use ggez::event::{self, EventHandler, MouseButton, KeyCode, KeyMods};

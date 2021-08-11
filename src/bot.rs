@@ -1,4 +1,4 @@
-use crate::extended_context::ExtendedContext;
+use crate::extensions::ExtendedContext;
 use crate::MainState;
 use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::{Context, GameResult};
