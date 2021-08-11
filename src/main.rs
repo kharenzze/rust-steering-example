@@ -89,7 +89,7 @@ impl EventHandler<ggez::GameError> for MainState {
       let bot_updates: Vec<StateUpdate> = imm
         .bots
         .iter()
-        .map(|b| b.calculate_steering_impulse(imm))
+        .map(|b| b.calculate_steering_impulse(imm, ctx))
         .collect();
       self.target.update(ctx)?;
       for (i, b) in self.bots.iter_mut().enumerate() {

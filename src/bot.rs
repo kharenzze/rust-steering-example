@@ -57,7 +57,7 @@ impl Bot {
     }
   }
 
-  pub fn calculate_steering_impulse(&self, state: &MainState) -> StateUpdate {
+  pub fn calculate_steering_impulse(&self, state: &MainState, ctx: &Context) -> StateUpdate {
     match state.steering_behaviour {
       SteeringBehaviour::SimpleSeek => self.calculate_seek_and_arrive(state, 0.0),
       SteeringBehaviour::SimpleFlee => self.calculate_simple_flee(state),
