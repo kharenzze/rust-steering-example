@@ -13,6 +13,7 @@ pub enum SteeringBehaviour {
   SimpleSeek,
   SimpleFlee,
   SeekAndArrive(f32),
+  Wander(f32, f32),
 }
 
 #[derive(Debug, Default)]
@@ -62,6 +63,17 @@ impl Bot {
       SteeringBehaviour::SimpleSeek => self.calculate_seek_and_arrive(state, 0.0),
       SteeringBehaviour::SimpleFlee => self.calculate_simple_flee(state),
       SteeringBehaviour::SeekAndArrive(radius) => self.calculate_seek_and_arrive(state, radius),
+      SteeringBehaviour::Wander(dist, rad) => self.calculate_wander(state, dist, rad),
+    }
+  }
+
+  pub fn calculate_wander(&self, state: &MainState, dist: f32, radius: f32) -> StateUpdate {
+    let distance_vector = state.target.pos - self.pos;
+    let mut desired_speed = distance_vector.clamp_length_max(MAX_SPEED);
+    let steering_impulse = (desired_speed - self.speed).clamp_length_max(MAX_IMPULSE);
+    StateUpdate {
+      desired_speed,
+      steering_impulse,
     }
   }
 
