@@ -101,8 +101,10 @@ impl Bot {
     } else {
       None
     };
-    let distance_vector = state.target.pos - self.pos;
-    let mut desired_speed = distance_vector.clamp_length_max(MAX_SPEED);
+    if wander_time.is_some() {
+
+    }
+    let desired_speed = self.desired_speed;
     let steering_impulse = (desired_speed - self.speed).clamp_length_max(MAX_IMPULSE);
     StateUpdate {
       desired_speed,
