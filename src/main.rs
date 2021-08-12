@@ -8,7 +8,7 @@ use ggez::graphics::{self, Color};
 use ggez::timer;
 use ggez::{Context, ContextBuilder, GameResult};
 use glam::*;
-use log::{debug, info, LevelFilter};
+use log::{info, LevelFilter};
 use simple_logger::SimpleLogger;
 use target::Target;
 

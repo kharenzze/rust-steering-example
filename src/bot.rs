@@ -1,11 +1,9 @@
 use std::time::Duration;
-
 use crate::extensions::{ExtendedContext, RandNonZero};
 use crate::MainState;
 use ggez::graphics::{self, Color, DrawMode, DrawParam};
-use ggez::{Context, GameResult, timer};
+use ggez::{timer, Context, GameResult};
 use glam::*;
-use log::debug;
 
 const MAX_SPEED: f32 = 10.0;
 const MAX_IMPULSE: f32 = 3.0;
@@ -15,14 +13,16 @@ const RADIO_RATIO: f32 = 1.0 / 36.0;
 pub struct WanderProps {
   radius: f32,
   center: f32,
+  interval: Duration,
 }
 
 impl Default for WanderProps {
   fn default() -> Self {
-      Self {
-        radius: 2.0,
-        center: 4.0,
-      }
+    Self {
+      radius: 2.0,
+      center: 3.0,
+      interval: Duration::from_millis(100),
+    }
   }
 }
 
@@ -39,6 +39,7 @@ pub struct Bot {
   pub pos: Vec2,
   speed: Vec2,
   desired_speed: Vec2,
+  last_wander: Duration,
   pub disabled: bool,
 }
 
@@ -46,6 +47,7 @@ pub struct Bot {
 pub struct StateUpdate {
   desired_speed: Vec2,
   steering_impulse: Vec2,
+  last_wander: Option<Duration>,
 }
 
 impl Bot {
@@ -57,6 +59,9 @@ impl Bot {
   pub fn update(&mut self, ctx: &mut Context, state_update: &StateUpdate) -> GameResult<()> {
     if self.disabled {
       return Ok(());
+    }
+    if let Some(t) = state_update.last_wander {
+      self.last_wander = t;
     }
     self.desired_speed = state_update.desired_speed;
     self.speed += state_update.steering_impulse;
@@ -85,14 +90,24 @@ impl Bot {
     }
   }
 
-  pub fn calculate_wander(&self, _ctx: &Context, wp: WanderProps) -> StateUpdate {
+  pub fn calculate_wander(&self, ctx: &Context, wp: WanderProps) -> StateUpdate {
     let desired_speed = Vec2::ZERO; //it's random
+    let time = timer::time_since_start(ctx);
+    let skip = time - self.last_wander < wp.interval;
+    if skip {
+      return StateUpdate {
+        desired_speed,
+        steering_impulse: Vec2::ZERO,
+        last_wander: None,
+      };
+    }
     let speed = self.speed.try_normalize().unwrap_or(Vec2::rand_unitary());
     let speed = speed * wp.center + Vec2::rand_unitary() * wp.radius;
     let steering_impulse = (speed - self.speed).clamp_length_max(MAX_IMPULSE);
     StateUpdate {
       desired_speed,
       steering_impulse,
+      last_wander: Some(time),
     }
   }
 
@@ -107,6 +122,7 @@ impl Bot {
     StateUpdate {
       desired_speed,
       steering_impulse,
+      last_wander: None,
     }
   }
 
@@ -122,6 +138,7 @@ impl Bot {
     StateUpdate {
       desired_speed,
       steering_impulse,
+      last_wander: None,
     }
   }
 
