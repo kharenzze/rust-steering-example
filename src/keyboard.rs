@@ -1,11 +1,23 @@
-use std::convert::{TryFrom};
 use ggez::event::KeyCode;
+use glam::Vec2;
+use std::convert::TryFrom;
 
 pub enum Direction {
   Up = 0,
   Right = 1,
   Down = 2,
   Left = 3,
+}
+
+impl From<Direction> for Vec2 {
+  fn from(d: Direction) -> Self {
+    match d {
+      Direction::Down => Vec2::new(0.0, 1.0),
+      Direction::Up => Vec2::new(0.0, -1.0),
+      Direction::Right => Vec2::new(1.0, 0.0),
+      Direction::Left => Vec2::new(-1.0, 0.0),
+    }
+  }
 }
 
 impl TryFrom<KeyCode> for Direction {
@@ -16,7 +28,7 @@ impl TryFrom<KeyCode> for Direction {
       KeyCode::D => Ok(Direction::Right),
       KeyCode::S => Ok(Direction::Down),
       KeyCode::A => Ok(Direction::Left),
-      _ => Err(())
+      _ => Err(()),
     }
   }
 }
