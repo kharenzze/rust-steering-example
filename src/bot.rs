@@ -8,6 +8,7 @@ use std::time::Duration;
 const MAX_SPEED: f32 = 10.0;
 const MAX_IMPULSE: f32 = 3.0;
 const RADIO_RATIO: f32 = 1.0 / 36.0;
+const FRICTION: f32 = 0.10;
 
 #[derive(Debug, Clone, Copy)]
 pub struct WanderProps {
@@ -66,7 +67,7 @@ impl Bot {
     }
     self.desired_speed = state_update.desired_speed;
     self.speed += state_update.steering_impulse;
-    self.speed = self.speed.clamp_length_max(MAX_SPEED);
+    self.speed = self.speed.clamp_length_max(MAX_SPEED) * (1.0 - FRICTION);
     self.pos += self.speed;
     self.enforce_pos_inside_view(ctx);
     Ok(())
