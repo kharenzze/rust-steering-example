@@ -2,6 +2,7 @@ use ggez::event::KeyCode;
 use glam::Vec2;
 use std::convert::TryFrom;
 
+#[repr(usize)]
 pub enum Direction {
   Up = 0,
   Right = 1,
@@ -34,11 +35,25 @@ impl TryFrom<KeyCode> for Direction {
 }
 
 #[derive(Debug)]
-pub struct DirPressedStatus([bool; 4]);
+pub struct DirPressedStatus(pub [bool; 4]);
 
 impl Default for DirPressedStatus {
   fn default() -> Self {
     Self([false; 4])
+  }
+}
+
+impl From<&DirPressedStatus> for Vec2 {
+  fn from(dir_arr: &DirPressedStatus) -> Self {
+    let mut v = Vec2::ZERO;
+    for (i, active) in dir_arr.0.iter().enumerate() {
+      if *active {
+        let d: Direction = unsafe {::std::mem::transmute(i)};
+        let vec: Vec2 = d.into();
+        v += vec;
+      }
+    }
+    v
   }
 }
 
