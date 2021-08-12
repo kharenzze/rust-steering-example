@@ -31,6 +31,7 @@ pub enum SteeringBehaviour {
   SimpleSeek,
   SimpleFlee,
   SeekAndArrive(f32),
+  Flee(f32),
   Wander(WanderProps),
 }
 
@@ -84,9 +85,10 @@ impl Bot {
   pub fn calculate_steering_impulse(&self, state: &MainState, ctx: &Context) -> StateUpdate {
     match state.steering_behaviour {
       SteeringBehaviour::SimpleSeek => self.calculate_seek_and_arrive(state, 0.0),
-      SteeringBehaviour::SimpleFlee => self.calculate_simple_flee(state),
+      SteeringBehaviour::SimpleFlee => self.calculate_flee(state, 10000.0),
       SteeringBehaviour::SeekAndArrive(radius) => self.calculate_seek_and_arrive(state, radius),
       SteeringBehaviour::Wander(wander_props) => self.calculate_wander(ctx, wander_props),
+      SteeringBehaviour::Flee(rad) => self.calculate_flee(state, rad),
     }
   }
 
@@ -126,7 +128,7 @@ impl Bot {
     }
   }
 
-  pub fn calculate_simple_flee(&self, state: &MainState) -> StateUpdate {
+  pub fn calculate_flee(&self, state: &MainState, radius: f32) -> StateUpdate {
     let diff = self.pos - state.target.pos;
     let safe_diff = if diff.length_squared() < 0.1 {
       Vec2::new(-1.0, -1.0)
