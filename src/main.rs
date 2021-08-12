@@ -1,7 +1,7 @@
 mod bot;
 mod extensions;
-mod target;
 mod keyboard;
+mod target;
 
 use bot::{Bot, StateUpdate, SteeringBehaviour, WanderProps};
 use ggez::event::{self, EventHandler, KeyCode, KeyMods, MouseButton};
@@ -9,6 +9,7 @@ use ggez::graphics::{self, Color};
 use ggez::timer;
 use ggez::{Context, ContextBuilder, GameResult};
 use glam::*;
+use keyboard::DirectionKeyHandler;
 use log::{info, LevelFilter};
 use simple_logger::SimpleLogger;
 use target::Target;
@@ -133,7 +134,10 @@ impl EventHandler<ggez::GameError> for MainState {
     if let Some(sb) = opt {
       self.steering_behaviour = sb;
     }
+    self.target.on_dir_key_pressed(keycode);
+  }
 
-
+  fn key_up_event(&mut self, _ctx: &mut Context, keycode: KeyCode, _keymods: KeyMods) {
+    self.target.on_dir_key_pressed(keycode);
   }
 }
