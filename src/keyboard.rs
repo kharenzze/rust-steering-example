@@ -41,7 +41,7 @@ pub trait DirectionKeyHandler {
   fn on_dir_key_released(&mut self, k: KeyCode) {
     let st = self.get_mut_dir_pressed_status();
     if let Ok(d) = Direction::try_from(k) {
-      st.0[d as usize] = true;
+      st.0[d as usize] = false;
     }
   }
 }

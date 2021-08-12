@@ -138,6 +138,6 @@ impl EventHandler<ggez::GameError> for MainState {
   }
 
   fn key_up_event(&mut self, _ctx: &mut Context, keycode: KeyCode, _keymods: KeyMods) {
-    self.target.on_dir_key_pressed(keycode);
+    self.target.on_dir_key_released(keycode);
   }
 }

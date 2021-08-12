@@ -29,6 +29,7 @@ impl DirectionKeyHandler for Target {
 
 impl EventHandler<ggez::GameError> for Target {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+    debug!("{:?}", &self.dir_pressed);
     Ok(())
   }
 
