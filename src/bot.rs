@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use crate::extensions::ExtendedContext;
+use crate::extensions::{ExtendedContext, RandNonZero};
 use crate::MainState;
 use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::{Context, GameResult, timer};
@@ -15,15 +15,13 @@ const RADIO_RATIO: f32 = 1.0 / 36.0;
 pub struct WanderProps {
   radius: f32,
   center: f32,
-  interval: Duration,
 }
 
 impl Default for WanderProps {
   fn default() -> Self {
       Self {
-        radius: 5.0,
-        center: 5.0,
-        interval: Duration::from_millis(500)
+        radius: 2.0,
+        center: 4.0,
       }
   }
 }
@@ -41,7 +39,6 @@ pub struct Bot {
   pub pos: Vec2,
   speed: Vec2,
   desired_speed: Vec2,
-  last_wander_time: Duration,
   pub disabled: bool,
 }
 
@@ -49,7 +46,6 @@ pub struct Bot {
 pub struct StateUpdate {
   desired_speed: Vec2,
   steering_impulse: Vec2,
-  wander_time: Option<Duration>
 }
 
 impl Bot {
@@ -61,10 +57,6 @@ impl Bot {
   pub fn update(&mut self, ctx: &mut Context, state_update: &StateUpdate) -> GameResult<()> {
     if self.disabled {
       return Ok(());
-    }
-    if let Some(wt) = state_update.wander_time {
-      self.last_wander_time = wt;
-      debug!("wander: {:?}", wt);
     }
     self.desired_speed = state_update.desired_speed;
     self.speed += state_update.steering_impulse;
@@ -89,27 +81,18 @@ impl Bot {
       SteeringBehaviour::SimpleSeek => self.calculate_seek_and_arrive(state, 0.0),
       SteeringBehaviour::SimpleFlee => self.calculate_simple_flee(state),
       SteeringBehaviour::SeekAndArrive(radius) => self.calculate_seek_and_arrive(state, radius),
-      SteeringBehaviour::Wander(wander_props) => self.calculate_wander(state, ctx,wander_props),
+      SteeringBehaviour::Wander(wander_props) => self.calculate_wander(ctx, wander_props),
     }
   }
 
-  pub fn calculate_wander(&self, state: &MainState, ctx: &Context, wp: WanderProps) -> StateUpdate {
-    let time = timer::time_since_start(ctx);
-    let diff_time = time - self.last_wander_time;
-    let wander_time = if diff_time > wp.interval {
-      Some(time)
-    } else {
-      None
-    };
-    if wander_time.is_some() {
-
-    }
-    let desired_speed = self.desired_speed;
-    let steering_impulse = (desired_speed - self.speed).clamp_length_max(MAX_IMPULSE);
+  pub fn calculate_wander(&self, _ctx: &Context, wp: WanderProps) -> StateUpdate {
+    let desired_speed = Vec2::ZERO; //it's random
+    let speed = self.speed.try_normalize().unwrap_or(Vec2::rand_unitary());
+    let speed = speed * wp.center + Vec2::rand_unitary() * wp.radius;
+    let steering_impulse = (speed - self.speed).clamp_length_max(MAX_IMPULSE);
     StateUpdate {
       desired_speed,
       steering_impulse,
-      wander_time,
     }
   }
 
@@ -124,7 +107,6 @@ impl Bot {
     StateUpdate {
       desired_speed,
       steering_impulse,
-      wander_time: None,
     }
   }
 
@@ -140,7 +122,6 @@ impl Bot {
     StateUpdate {
       desired_speed,
       steering_impulse,
-      wander_time: None,
     }
   }
 
