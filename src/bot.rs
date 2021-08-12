@@ -1,9 +1,9 @@
-use std::time::Duration;
 use crate::extensions::{ExtendedContext, RandNonZero};
 use crate::MainState;
 use ggez::graphics::{self, Color, DrawMode, DrawParam};
 use ggez::{timer, Context, GameResult};
 use glam::*;
+use std::time::Duration;
 
 const MAX_SPEED: f32 = 10.0;
 const MAX_IMPULSE: f32 = 3.0;
@@ -130,6 +130,13 @@ impl Bot {
 
   pub fn calculate_flee(&self, state: &MainState, radius: f32) -> StateUpdate {
     let diff = self.pos - state.target.pos;
+    if diff.length_squared() > (radius * radius) {
+      return StateUpdate {
+        desired_speed: Vec2::ZERO,
+        steering_impulse: Vec2::ZERO,
+        last_wander: None,
+      };
+    }
     let safe_diff = if diff.length_squared() < 0.1 {
       Vec2::rand_unitary()
     } else {
