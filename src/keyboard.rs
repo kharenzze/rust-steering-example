@@ -21,20 +21,27 @@ impl TryFrom<KeyCode> for Direction {
   }
 }
 
-pub type DirPressedStatus = [bool; 4];
+#[derive(Debug)]
+pub struct DirPressedStatus([bool; 4]);
 
-trait DirectionKeyHandler {
+impl Default for DirPressedStatus {
+  fn default() -> Self {
+    Self([false; 4])
+  }
+}
+
+pub trait DirectionKeyHandler {
   fn get_mut_dir_pressed_status(&mut self) -> &mut DirPressedStatus;
   fn on_dir_key_pressed(&mut self, k: KeyCode) {
     let st = self.get_mut_dir_pressed_status();
     if let Ok(d) = Direction::try_from(k) {
-      st[d as usize] = true;
+      st.0[d as usize] = true;
     }
   }
   fn on_dir_key_released(&mut self, k: KeyCode) {
     let st = self.get_mut_dir_pressed_status();
     if let Ok(d) = Direction::try_from(k) {
-      st[d as usize] = true;
+      st.0[d as usize] = true;
     }
   }
 }

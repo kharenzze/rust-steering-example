@@ -1,17 +1,29 @@
 use ggez::event::{EventHandler, MouseButton};
-use ggez::graphics::{self, Color, DrawMode, DrawParam, window};
+use ggez::graphics::{self, window, Color, DrawMode, DrawParam};
 use ggez::{Context, GameResult};
 use glam::*;
 use log::debug;
 
+use crate::keyboard::{DirPressedStatus, DirectionKeyHandler};
+
 #[derive(Debug, Default)]
 pub struct Target {
   pub pos: Vec2,
+  dir_pressed: DirPressedStatus,
 }
 
 impl Target {
   pub fn new(pos: Vec2) -> Self {
-    Target { pos }
+    Target {
+      pos,
+      dir_pressed: DirPressedStatus::default()
+    }
+  }
+}
+
+impl DirectionKeyHandler for Target {
+  fn get_mut_dir_pressed_status(&mut self) -> &mut DirPressedStatus {
+    &mut self.dir_pressed
   }
 }
 
