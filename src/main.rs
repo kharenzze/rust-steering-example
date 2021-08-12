@@ -1,9 +1,9 @@
 mod bot;
-mod target;
 mod extensions;
+mod target;
 
 use bot::{Bot, StateUpdate, SteeringBehaviour, WanderProps};
-use ggez::event::{self, EventHandler, MouseButton, KeyCode, KeyMods};
+use ggez::event::{self, EventHandler, KeyCode, KeyMods, MouseButton};
 use ggez::graphics::{self, Color};
 use ggez::timer;
 use ggez::{Context, ContextBuilder, GameResult};
@@ -115,22 +115,22 @@ impl EventHandler<ggez::GameError> for MainState {
   }
 
   fn key_down_event(
-        &mut self,
-        _ctx: &mut Context,
-        keycode: KeyCode,
-        _keymod: KeyMods,
-        _repeat: bool,
-    ) {
-      let opt: Option<SteeringBehaviour> = match keycode {
-        KeyCode::Key1 => Some(SteeringBehaviour::SimpleSeek),
-        KeyCode::Key2=> Some(SteeringBehaviour::SimpleFlee),
-        KeyCode::Key3 => Some(SteeringBehaviour::SeekAndArrive(60.0)),
-        KeyCode::Key4 => Some(SteeringBehaviour::Wander(WanderProps::default())),
-        KeyCode::Key5 => Some(SteeringBehaviour::Flee(100.0)),
-        _ => None
-      };
-      if let Some(sb) = opt {
-        self.steering_behaviour = sb;
-      }
+    &mut self,
+    _ctx: &mut Context,
+    keycode: KeyCode,
+    _keymod: KeyMods,
+    _repeat: bool,
+  ) {
+    let opt: Option<SteeringBehaviour> = match keycode {
+      KeyCode::Key1 => Some(SteeringBehaviour::SimpleSeek),
+      KeyCode::Key2 => Some(SteeringBehaviour::SimpleFlee),
+      KeyCode::Key3 => Some(SteeringBehaviour::SeekAndArrive(60.0)),
+      KeyCode::Key4 => Some(SteeringBehaviour::Wander(WanderProps::default())),
+      KeyCode::Key5 => Some(SteeringBehaviour::Flee(100.0)),
+      _ => None,
+    };
+    if let Some(sb) = opt {
+      self.steering_behaviour = sb;
     }
+  }
 }
