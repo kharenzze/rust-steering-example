@@ -131,7 +131,7 @@ impl Bot {
   pub fn calculate_flee(&self, state: &MainState, radius: f32) -> StateUpdate {
     let diff = self.pos - state.target.pos;
     let safe_diff = if diff.length_squared() < 0.1 {
-      Vec2::new(-1.0, -1.0)
+      Vec2::rand_unitary()
     } else {
       diff
     };
