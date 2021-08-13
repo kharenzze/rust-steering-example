@@ -34,6 +34,7 @@ pub enum SteeringBehaviour {
   SeekAndArrive(f32),
   Flee(f32),
   Wander(WanderProps),
+  SeekSquad(f32, f32)
 }
 
 impl std::fmt::Display for SteeringBehaviour {
@@ -44,6 +45,7 @@ impl std::fmt::Display for SteeringBehaviour {
       SteeringBehaviour::SimpleSeek => "Simple Seek",
       SteeringBehaviour::Flee(_) => "Flee",
       SteeringBehaviour::Wander(_) => "Wander",
+      SteeringBehaviour::SeekSquad(_, _) => "Seek Squad",
     };
     write!(f, "{}", t)
   }
@@ -104,6 +106,7 @@ impl Bot {
       SteeringBehaviour::SeekAndArrive(radius) => self.calculate_seek_and_arrive(state, radius),
       SteeringBehaviour::Wander(wander_props) => self.calculate_wander(ctx, wander_props),
       SteeringBehaviour::Flee(rad) => self.calculate_flee(state, rad),
+      SteeringBehaviour::SeekSquad(target_rad, flee_rad) => self.calculate_flee(state, target_rad),
     }
   }
 
