@@ -22,6 +22,8 @@ impl Default for Notification {
   }
 }
 
+const TEXT_SCALE: f32 = 30.0 / 1080.0;
+
 impl Notification {
   fn should_display(&self, ctx: &Context) -> bool {
     if let Some(display_time) = self.display_time {
@@ -48,7 +50,9 @@ impl Notification {
     }
     let size = window(ctx).inner_size();
     let h = size.height as f32;
-    let rect = Rect::new(0.0, 0.0, h / 2.0, 100.0);
+    let text_size = h * TEXT_SCALE;
+    let rect_w = (text_size * 0.9) * self.text.len() as f32 + 50.0;
+    let rect = Rect::new(0.0, 0.0, rect_w, 100.0);
     let mut mb = MeshBuilder::new();
     mb.rectangle(DrawMode::fill(), rect, Self::bg_color())?;
     let mesh = mb.build(ctx)?;
@@ -58,7 +62,7 @@ impl Notification {
       text: self.text.clone(),
       color: Some(Color::WHITE),
       font: Some(graphics::Font::default()),
-      scale: Some(PxScale::from(30.0)),
+      scale: Some(PxScale::from(text_size)),
     });
     graphics::queue_text(ctx, &text, Vec2::new(50.0, 40.0), None);
     graphics::draw_queued_text(
