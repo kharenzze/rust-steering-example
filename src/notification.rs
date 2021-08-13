@@ -8,7 +8,7 @@ use std::time::Duration;
 #[derive(Debug)]
 pub struct Notification {
   text: String,
-  display_time: Duration,
+  display_time: Option<Duration>,
   display_interval: Duration,
 }
 
@@ -16,7 +16,7 @@ impl Default for Notification {
   fn default() -> Self {
     Self {
       text: "Some text".to_string(),
-      display_time: Duration::from_secs(1_000_000),
+      display_time: None,
       display_interval: Duration::from_secs(3),
     }
   }
@@ -24,13 +24,16 @@ impl Default for Notification {
 
 impl Notification {
   fn should_display(&self, ctx: &Context) -> bool {
-    let time = timer::time_since_start(ctx);
-    time < (self.display_time + self.display_interval)
+    if let Some(display_time) = self.display_time {
+      let time = timer::time_since_start(ctx);
+      return time < (display_time + self.display_interval);
+    }
+    false
   }
 
   pub fn display(&mut self, ctx: &mut Context, text: String) {
     let time = timer::time_since_start(ctx);
-    self.display_time = time;
+    self.display_time = Some(time);
     self.text = text;
   }
 
@@ -41,7 +44,7 @@ impl Notification {
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     if !self.should_display(ctx) {
-      return Ok(())
+      return Ok(());
     }
     let size = window(ctx).inner_size();
     let h = size.height as f32;
