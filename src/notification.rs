@@ -40,9 +40,12 @@ impl Notification {
   }
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    if !self.should_display(ctx) {
+      return Ok(())
+    }
     let size = window(ctx).inner_size();
     let h = size.height as f32;
-    let rect = Rect::new(0.0, 0.0, h / 2.0, h / 2.0);
+    let rect = Rect::new(0.0, 0.0, h / 2.0, 100.0);
     let mut mb = MeshBuilder::new();
     mb.rectangle(DrawMode::fill(), rect, Self::bg_color())?;
     let mesh = mb.build(ctx)?;
@@ -54,7 +57,7 @@ impl Notification {
       font: Some(graphics::Font::default()),
       scale: Some(PxScale::from(30.0)),
     });
-    graphics::queue_text(ctx, &text, Vec2::new(50.0, 50.0), None);
+    graphics::queue_text(ctx, &text, Vec2::new(50.0, 40.0), None);
     graphics::draw_queued_text(
       ctx,
       DrawParam::default(),
