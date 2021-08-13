@@ -137,8 +137,8 @@ impl EventHandler<ggez::GameError> for MainState {
       _ => None,
     };
     if let Some(sb) = opt {
+      self.notification.display(ctx, format!("{}", &sb));
       self.steering_behaviour = sb;
-      self.notification.display(ctx, format!("{:?}", &keycode))
     }
     self.target.on_dir_key_pressed(keycode);
   }
