@@ -1,5 +1,6 @@
+use ggez::graphics::{window, Color, DrawMode, DrawParam, MeshBuilder, Rect};
+use ggez::{graphics, timer, Context, GameResult};
 use std::time::Duration;
-use ggez::{Context, timer};
 
 #[derive(Debug)]
 pub struct Notification {
@@ -21,6 +22,16 @@ impl Default for Notification {
 impl Notification {
   fn should_display(&self, ctx: &Context) -> bool {
     let time = timer::time_since_start(ctx);
-    time < (self.display_time + self.display_interval) 
+    time < (self.display_time + self.display_interval)
+  }
+
+  fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    let size = window(ctx).inner_size();
+    let h = size.height as f32;
+    let rect = Rect::new(0.0, 0.0, h / 2.0, h / 2.0);
+    let mut mb = MeshBuilder::new();
+    mb.rectangle(DrawMode::fill(), rect, Color::YELLOW)?;
+    let mesh = mb.build(ctx)?;
+    graphics::draw(ctx, &mesh, DrawParam::default())
   }
 }
