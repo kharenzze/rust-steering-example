@@ -135,7 +135,7 @@ impl EventHandler<ggez::GameError> for MainState {
       KeyCode::Key3 => Some(SteeringBehaviour::SeekAndArrive(60.0)),
       KeyCode::Key4 => Some(SteeringBehaviour::Wander(WanderProps::default())),
       KeyCode::Key5 => Some(SteeringBehaviour::Flee(100.0)),
-      KeyCode::Key6 => Some(SteeringBehaviour::SeekSquad(60.0, 100.0)),
+      KeyCode::Key6 => Some(SteeringBehaviour::SeekSquad(100.0, 150.0)),
       _ => None,
     };
     if let Some(sb) = opt {
