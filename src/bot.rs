@@ -127,12 +127,13 @@ impl Bot {
       .filter(|b| b.id != this_id)
       .map(|b| self.calculate_flee(b.pos, flee_rad))
       .collect();
-    
-    let desired_speed =  target_status.desired_speed;
+
+    let desired_speed = target_status.desired_speed;
     bot_status_arr.push(target_status);
-    let steering_impulse = bot_status_arr.iter()
-    .map(|b| b.steering_impulse)
-    .fold(Vec2::ZERO, |sum, v| sum + v);
+    let steering_impulse = bot_status_arr
+      .iter()
+      .map(|b| b.steering_impulse)
+      .fold(Vec2::ZERO, |sum, v| sum + v);
 
     StateUpdate {
       desired_speed,
@@ -186,12 +187,13 @@ impl Bot {
         last_wander: None,
       };
     }
-    let safe_diff = if diff.length_squared() < 0.1 {
+    let safe_diff = if diff.length_squared() < 0.01 {
       Vec2::rand_unitary()
     } else {
       diff
     };
-    let desired_speed = safe_diff.clamp_length(MAX_SPEED, MAX_SPEED);
+    let percent = 1.0 - (safe_diff.length() / radius);
+    let desired_speed = (safe_diff * percent).clamp_length_max(MAX_SPEED);
     let steering_impulse = (desired_speed - self.speed).clamp_length_max(MAX_IMPULSE);
     StateUpdate {
       desired_speed,
