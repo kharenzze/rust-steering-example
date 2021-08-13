@@ -14,7 +14,7 @@ impl DirPressedStatus {
   fn iter_direction(&self) -> impl Iterator<Item = (Direction, bool)> {
     let value = self.0;
     (0..4_usize).into_iter().map(move |i| {
-      let d: Direction = unsafe {::std::mem::transmute(i)};
+      let d: Direction = unsafe { ::std::mem::transmute(i) };
       let active = (value >> i) & 1;
       let active = active == 1;
       (d, active)
