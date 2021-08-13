@@ -36,6 +36,19 @@ pub enum SteeringBehaviour {
   Wander(WanderProps),
 }
 
+impl std::fmt::Display for SteeringBehaviour {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    let t = match *self {
+      SteeringBehaviour::SeekAndArrive(_) => "Seek and Arrive",
+      SteeringBehaviour::SimpleFlee => "Simple Flee",
+      SteeringBehaviour::SimpleSeek => "Simple Seek",
+      SteeringBehaviour::Flee(_) => "Flee",
+      SteeringBehaviour::Wander(_) => "Wander",
+    };
+    write!(f, "{}", t)
+  }
+}
+
 #[derive(Debug, Default)]
 pub struct Bot {
   pub pos: Vec2,
