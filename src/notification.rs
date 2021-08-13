@@ -1,7 +1,9 @@
-use ggez::graphics::{window, Color, DrawMode, DrawParam, MeshBuilder, Rect, Text};
+use ggez::graphics::{
+  window, Color, DrawMode, DrawParam, MeshBuilder, PxScale, Rect, Text, TextFragment,
+};
 use ggez::{graphics, timer, Context, GameResult};
-use std::time::Duration;
 use glam::*;
+use std::time::Duration;
 
 #[derive(Debug)]
 pub struct Notification {
@@ -40,8 +42,13 @@ impl Notification {
     let mesh = mb.build(ctx)?;
     graphics::draw(ctx, &mesh, DrawParam::default())?;
 
-    let text = Text::new(self.text.clone());
-    graphics::queue_text(ctx, &text, Vec2::new(100.0, 100.0), None);
+    let text = Text::new(TextFragment {
+      text: self.text.clone(),
+      color: Some(Color::WHITE),
+      font: Some(graphics::Font::default()),
+      scale: Some(PxScale::from(30.0)),
+    });
+    graphics::queue_text(ctx, &text, Vec2::new(50.0, 50.0), None);
     graphics::draw_queued_text(
       ctx,
       DrawParam::default(),
