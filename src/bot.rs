@@ -56,6 +56,7 @@ pub struct Bot {
   desired_speed: Vec2,
   last_wander: Duration,
   pub disabled: bool,
+  pub id: usize,
 }
 
 #[derive(Debug, Default)]

@@ -1,8 +1,8 @@
 mod bot;
 mod extensions;
 mod keyboard;
-mod target;
 mod notification;
+mod target;
 
 use bot::{Bot, StateUpdate, SteeringBehaviour, WanderProps};
 use ggez::event::{self, EventHandler, KeyCode, KeyMods, MouseButton};
@@ -74,6 +74,7 @@ impl MainState {
       b.pos.x = x;
       b.pos.y = 100.0 + gap * ((i + 1) as f32);
       b.disabled = i != 0;
+      b.id = i;
     }
     MainState {
       target: Target::new(Vec2::new(500.0, 500.0)),
