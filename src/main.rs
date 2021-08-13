@@ -2,6 +2,7 @@ mod bot;
 mod extensions;
 mod keyboard;
 mod target;
+mod notification;
 
 use bot::{Bot, StateUpdate, SteeringBehaviour, WanderProps};
 use ggez::event::{self, EventHandler, KeyCode, KeyMods, MouseButton};
