@@ -28,6 +28,12 @@ impl Notification {
     time < (self.display_time + self.display_interval)
   }
 
+  pub fn display(&mut self, ctx: &mut Context, text: String) {
+    let time = timer::time_since_start(ctx);
+    self.display_time = time;
+    self.text = text;
+  }
+
   #[inline]
   fn bg_color() -> Color {
     Color::from_rgba_u32(0x44444480)
