@@ -12,6 +12,7 @@ use ggez::{Context, ContextBuilder, GameResult};
 use glam::*;
 use keyboard::DirectionKeyHandler;
 use log::{info, LevelFilter};
+use notification::Notification;
 use simple_logger::SimpleLogger;
 use target::Target;
 
@@ -60,6 +61,7 @@ pub struct MainState {
   pub bots: [Bot; 4],
   pub resolution: Vec2,
   pub steering_behaviour: SteeringBehaviour,
+  notification: Notification,
   pub x: usize,
 }
 
@@ -78,6 +80,7 @@ impl MainState {
       steering_behaviour: SteeringBehaviour::SimpleSeek,
       bots,
       resolution: res,
+      notification: Notification::default(),
       x: 1,
     }
   }
@@ -108,6 +111,7 @@ impl EventHandler<ggez::GameError> for MainState {
     for b in self.bots.iter_mut() {
       b.draw(ctx)?;
     }
+    self.notification.draw(ctx)?;
     graphics::present(ctx)?;
     timer::yield_now();
     Ok(())

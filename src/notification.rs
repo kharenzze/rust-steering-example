@@ -25,7 +25,7 @@ impl Notification {
     time < (self.display_time + self.display_interval)
   }
 
-  fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+  pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     let size = window(ctx).inner_size();
     let h = size.height as f32;
     let rect = Rect::new(0.0, 0.0, h / 2.0, h / 2.0);
