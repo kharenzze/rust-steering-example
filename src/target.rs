@@ -31,7 +31,7 @@ impl EventHandler<ggez::GameError> for Target {
   fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
     //debug!("{:?}", &self.dir_pressed);
     let dir: Vec2 = (&self.dir_pressed).into();
-    self.pos += dir;
+    self.pos += dir * 5.0;
     Ok(())
   }
 
