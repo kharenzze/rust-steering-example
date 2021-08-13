@@ -34,7 +34,7 @@ pub enum SteeringBehaviour {
   SeekAndArrive(f32),
   Flee(f32),
   Wander(WanderProps),
-  SeekSquad(f32, f32)
+  SeekSquad(f32, f32),
 }
 
 impl std::fmt::Display for SteeringBehaviour {
@@ -102,11 +102,42 @@ impl Bot {
   pub fn calculate_steering_impulse(&self, state: &MainState, ctx: &Context) -> StateUpdate {
     match state.steering_behaviour_target {
       SteeringBehaviour::SimpleSeek => self.calculate_seek_and_arrive(state, 0.0),
-      SteeringBehaviour::SimpleFlee => self.calculate_flee(state, 10000.0),
+      SteeringBehaviour::SimpleFlee => self.calculate_flee(state.target.pos, 10000.0),
       SteeringBehaviour::SeekAndArrive(radius) => self.calculate_seek_and_arrive(state, radius),
       SteeringBehaviour::Wander(wander_props) => self.calculate_wander(ctx, wander_props),
-      SteeringBehaviour::Flee(rad) => self.calculate_flee(state, rad),
-      SteeringBehaviour::SeekSquad(target_rad, flee_rad) => self.calculate_flee(state, target_rad),
+      SteeringBehaviour::Flee(rad) => self.calculate_flee(state.target.pos, rad),
+      SteeringBehaviour::SeekSquad(target_rad, flee_rad) => {
+        self.calculate_seek_squad(ctx, state, target_rad, flee_rad)
+      }
+    }
+  }
+
+  fn calculate_seek_squad(
+    &self,
+    _ctx: &Context,
+    state: &MainState,
+    target_rad: f32,
+    flee_rad: f32,
+  ) -> StateUpdate {
+    let target_status = self.calculate_seek_and_arrive(state, target_rad);
+    let this_id = self.id;
+    let mut bot_status_arr: Vec<StateUpdate> = state
+      .bots
+      .iter()
+      .filter(|b| b.id != this_id)
+      .map(|b| self.calculate_flee(b.pos, flee_rad))
+      .collect();
+    
+    let desired_speed =  target_status.desired_speed;
+    bot_status_arr.push(target_status);
+    let steering_impulse = bot_status_arr.iter()
+    .map(|b| b.steering_impulse)
+    .fold(Vec2::ZERO, |sum, v| sum + v);
+
+    StateUpdate {
+      desired_speed,
+      steering_impulse,
+      last_wander: None,
     }
   }
 
@@ -146,8 +177,8 @@ impl Bot {
     }
   }
 
-  fn calculate_flee(&self, state: &MainState, radius: f32) -> StateUpdate {
-    let diff = self.pos - state.target.pos;
+  fn calculate_flee(&self, target_pos: Vec2, radius: f32) -> StateUpdate {
+    let diff = self.pos - target_pos;
     if diff.length_squared() > (radius * radius) {
       return StateUpdate {
         desired_speed: Vec2::ZERO,
