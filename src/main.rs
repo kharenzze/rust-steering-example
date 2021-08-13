@@ -123,7 +123,7 @@ impl EventHandler<ggez::GameError> for MainState {
 
   fn key_down_event(
     &mut self,
-    _ctx: &mut Context,
+    ctx: &mut Context,
     keycode: KeyCode,
     _keymod: KeyMods,
     _repeat: bool,
@@ -138,6 +138,7 @@ impl EventHandler<ggez::GameError> for MainState {
     };
     if let Some(sb) = opt {
       self.steering_behaviour = sb;
+      self.notification.display(ctx, format!("{:?}", &keycode))
     }
     self.target.on_dir_key_pressed(keycode);
   }
