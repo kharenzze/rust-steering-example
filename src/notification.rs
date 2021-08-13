@@ -1,4 +1,4 @@
-use ggez::graphics::{window, Color, DrawMode, DrawParam, MeshBuilder, Rect};
+use ggez::graphics::{window, Color, DrawMode, DrawParam, MeshBuilder, Rect, Text};
 use ggez::{graphics, timer, Context, GameResult};
 use std::time::Duration;
 
@@ -25,12 +25,17 @@ impl Notification {
     time < (self.display_time + self.display_interval)
   }
 
+  #[inline]
+  fn bg_color() -> Color {
+    Color::from_rgba_u32(0xCCCCCC80)
+  }
+
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
     let size = window(ctx).inner_size();
     let h = size.height as f32;
     let rect = Rect::new(0.0, 0.0, h / 2.0, h / 2.0);
     let mut mb = MeshBuilder::new();
-    mb.rectangle(DrawMode::fill(), rect, Color::YELLOW)?;
+    mb.rectangle(DrawMode::fill(), rect, Self::bg_color())?;
     let mesh = mb.build(ctx)?;
     graphics::draw(ctx, &mesh, DrawParam::default())
   }
