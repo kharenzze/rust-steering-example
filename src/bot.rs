@@ -110,7 +110,7 @@ impl Bot {
     }
   }
 
-  pub fn calculate_wander(&self, ctx: &Context, wp: WanderProps) -> StateUpdate {
+  fn calculate_wander(&self, ctx: &Context, wp: WanderProps) -> StateUpdate {
     let desired_speed = Vec2::ZERO; //it's random
     let time = timer::time_since_start(ctx);
     let skip = time - self.last_wander < wp.interval;
@@ -131,7 +131,7 @@ impl Bot {
     }
   }
 
-  pub fn calculate_seek_and_arrive(&self, state: &MainState, radius: f32) -> StateUpdate {
+  fn calculate_seek_and_arrive(&self, state: &MainState, radius: f32) -> StateUpdate {
     let distance_vector = state.target.pos - self.pos;
     let mut desired_speed = distance_vector.clamp_length_max(MAX_SPEED);
     let distance = distance_vector.length();
@@ -146,7 +146,7 @@ impl Bot {
     }
   }
 
-  pub fn calculate_flee(&self, state: &MainState, radius: f32) -> StateUpdate {
+  fn calculate_flee(&self, state: &MainState, radius: f32) -> StateUpdate {
     let diff = self.pos - state.target.pos;
     if diff.length_squared() > (radius * radius) {
       return StateUpdate {
