@@ -60,7 +60,7 @@ pub struct MainState {
   pub target: Target,
   pub bots: [Bot; 4],
   pub resolution: Vec2,
-  pub steering_behaviour: SteeringBehaviour,
+  pub steering_behaviour_target: SteeringBehaviour,
   notification: Notification,
   pub x: usize,
 }
@@ -78,7 +78,7 @@ impl MainState {
     }
     MainState {
       target: Target::new(Vec2::new(500.0, 500.0)),
-      steering_behaviour: SteeringBehaviour::SimpleSeek,
+      steering_behaviour_target: SteeringBehaviour::SimpleSeek,
       bots,
       resolution: res,
       notification: Notification::default(),
@@ -139,7 +139,7 @@ impl EventHandler<ggez::GameError> for MainState {
     };
     if let Some(sb) = opt {
       self.notification.display(ctx, format!("{}", &sb));
-      self.steering_behaviour = sb;
+      self.steering_behaviour_target = sb;
     }
     self.target.on_dir_key_pressed(keycode);
   }
