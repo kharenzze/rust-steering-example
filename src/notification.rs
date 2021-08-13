@@ -1,6 +1,7 @@
 use ggez::graphics::{window, Color, DrawMode, DrawParam, MeshBuilder, Rect, Text};
 use ggez::{graphics, timer, Context, GameResult};
 use std::time::Duration;
+use glam::*;
 
 #[derive(Debug)]
 pub struct Notification {
@@ -12,7 +13,7 @@ pub struct Notification {
 impl Default for Notification {
   fn default() -> Self {
     Self {
-      text: "".to_string(),
+      text: "Some text".to_string(),
       display_time: Duration::from_secs(1_000_000),
       display_interval: Duration::from_secs(3),
     }
@@ -27,7 +28,7 @@ impl Notification {
 
   #[inline]
   fn bg_color() -> Color {
-    Color::from_rgba_u32(0xCCCCCC80)
+    Color::from_rgba_u32(0x44444480)
   }
 
   pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -37,6 +38,15 @@ impl Notification {
     let mut mb = MeshBuilder::new();
     mb.rectangle(DrawMode::fill(), rect, Self::bg_color())?;
     let mesh = mb.build(ctx)?;
-    graphics::draw(ctx, &mesh, DrawParam::default())
+    graphics::draw(ctx, &mesh, DrawParam::default())?;
+
+    let text = Text::new(self.text.clone());
+    graphics::queue_text(ctx, &text, Vec2::new(100.0, 100.0), None);
+    graphics::draw_queued_text(
+      ctx,
+      DrawParam::default(),
+      None,
+      graphics::FilterMode::Linear,
+    )
   }
 }
