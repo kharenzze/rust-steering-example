@@ -61,6 +61,7 @@ pub struct MainState {
   pub bots: [Bot; 4],
   pub resolution: Vec2,
   pub steering_behaviour_target: SteeringBehaviour,
+  pub steering_behaviour_bot: SteeringBehaviour,
   notification: Notification,
   pub x: usize,
 }
@@ -79,6 +80,7 @@ impl MainState {
     MainState {
       target: Target::new(Vec2::new(500.0, 500.0)),
       steering_behaviour_target: SteeringBehaviour::SimpleSeek,
+      steering_behaviour_bot: SteeringBehaviour::Flee(60.0),
       bots,
       resolution: res,
       notification: Notification::default(),
