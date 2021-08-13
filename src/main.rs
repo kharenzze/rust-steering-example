@@ -135,10 +135,19 @@ impl EventHandler<ggez::GameError> for MainState {
       KeyCode::Key3 => Some(SteeringBehaviour::SeekAndArrive(60.0)),
       KeyCode::Key4 => Some(SteeringBehaviour::Wander(WanderProps::default())),
       KeyCode::Key5 => Some(SteeringBehaviour::Flee(100.0)),
+      KeyCode::Key6 => Some(SteeringBehaviour::SeekSquad(60.0, 100.0)),
       _ => None,
     };
     if let Some(sb) = opt {
       self.notification.display(ctx, format!("{}", &sb));
+      let acitvate_bots = if let SteeringBehaviour::SeekSquad(_, _) = sb {
+        true
+      } else {
+        false
+      };
+      for i in 1..self.bots.len() {
+        self.bots[i].disabled = !acitvate_bots;
+      }
       self.steering_behaviour_target = sb;
     }
     self.target.on_dir_key_pressed(keycode);
