@@ -10,6 +10,18 @@ pub enum Direction {
   Left = 3,
 }
 
+impl DirPressedStatus {
+  fn iter_direction(&self) -> impl Iterator<Item = (Direction, bool)> {
+    let value = self.0;
+    (0..4_usize).into_iter().map(move |i| {
+      let d: Direction = unsafe {::std::mem::transmute(i)};
+      let active = (value >> i) | 1;
+      let active = active == 1;
+      (d, active)
+    })
+  }
+}
+
 impl From<Direction> for Vec2 {
   fn from(d: Direction) -> Self {
     match d {
@@ -34,22 +46,15 @@ impl TryFrom<KeyCode> for Direction {
   }
 }
 
-#[derive(Debug)]
-pub struct DirPressedStatus(pub [bool; 4]);
-
-impl Default for DirPressedStatus {
-  fn default() -> Self {
-    Self([false; 4])
-  }
-}
+#[derive(Debug, Default)]
+pub struct DirPressedStatus(usize);
 
 impl From<&DirPressedStatus> for Vec2 {
-  fn from(dir_arr: &DirPressedStatus) -> Self {
+  fn from(dir_status: &DirPressedStatus) -> Self {
     let mut v = Vec2::ZERO;
-    for (i, active) in dir_arr.0.iter().enumerate() {
-      if *active {
-        let d: Direction = unsafe {::std::mem::transmute(i)};
-        let vec: Vec2 = d.into();
+    for (dir, active) in dir_status.iter_direction() {
+      if active {
+        let vec: Vec2 = dir.into();
         v += vec;
       }
     }
@@ -62,13 +67,17 @@ pub trait DirectionKeyHandler {
   fn on_dir_key_pressed(&mut self, k: KeyCode) {
     let st = self.get_mut_dir_pressed_status();
     if let Ok(d) = Direction::try_from(k) {
-      st.0[d as usize] = true;
+      let d = d as usize;
+      let mask: usize = 1 << d;
+      st.0 = st.0 | mask;
     }
   }
   fn on_dir_key_released(&mut self, k: KeyCode) {
     let st = self.get_mut_dir_pressed_status();
     if let Ok(d) = Direction::try_from(k) {
-      st.0[d as usize] = false;
+      let d = d as usize;
+      let mask: usize = !(1 << d);
+      st.0 = st.0 & mask;
     }
   }
 }
